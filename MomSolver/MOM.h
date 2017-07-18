@@ -27,7 +27,8 @@ public:
 	complex<double> green(double R);
 	complex<double> Singulargreen(double R);
 	void FillRhs();
-	complex<double> MOM::IntegralRhs(int m);
+	complex<double> IntegralRhs(int m);
+	Vector3cd IntegralEfield(int m, double phi, double theta);
 	void Solver();
 	Vector3cd ScatteredField(double phi, double theta);
 	void RCS();
