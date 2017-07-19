@@ -1,0 +1,4 @@
+
+=== Start: [2017/07/18 18:22:13] === 
+Analysis started...
+Result file: C:\Users\sszz\Documents\Visual Studio 2015\Projects\MomSolver\MomSolver\My Advisor Results - MomSolver\e000\trc000\trc000.advixe 

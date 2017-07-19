@@ -6,6 +6,7 @@
 #include <iostream>
 #include <Eigen\Dense>
 #include "MOM.h"
+#include "PO.h"
 #include "PlaneWave.h"
 #include <time.h>
 using namespace std;
@@ -25,25 +26,30 @@ int main()
 	{
 		cout << "Mesh output successfully!" << endl;
 	}
+	//this is the procedure for MoM
 	mesh.EdgeInit();
 	mesh.WriteEdge();
 	mesh.PrintEdgeInfo();
 	PlaneWave Einc(1.0, 3e8, PI / 2.0, 0.0, H);
-	MOM momsolver(&mesh, Einc);
-	start = clock();
-	cout << "Filling Matrix..." << endl;
-	momsolver.FillMatrix();
-	momsolver.FillRhs();
-	end = clock();
-	duration = (double)(end - start) / CLOCKS_PER_SEC;
-	cout << "Filling Matrix use " << duration << " second." << endl;
-	start = clock();
-	cout << "Solving system equation..." << endl;
-	momsolver.Solver();
-	end = clock();
-	duration = (double)(end - start) / CLOCKS_PER_SEC;
-	cout << "Solving system equation use " << duration << " second." << endl;
-	momsolver.RCS();
+	//MOM momsolver(&mesh, Einc);
+	//start = clock();
+	//cout << "Filling Matrix..." << endl;
+	//momsolver.FillMatrix();
+	//momsolver.FillRhs();
+	//end = clock();
+	//duration = (double)(end - start) / CLOCKS_PER_SEC;
+	//cout << "Filling Matrix use " << duration << " second." << endl;
+	//start = clock();
+	//cout << "Solving system equation..." << endl;
+	//momsolver.Solver();
+	//end = clock();
+	//duration = (double)(end - start) / CLOCKS_PER_SEC;
+	//cout << "Solving system equation use " << duration << " second." << endl;
+	//momsolver.RCS();
+	//this is the procedure for PO
+	PO posolver(&mesh, Einc);
+	posolver.judgeLitPatch(Einc.kDir);
+	posolver.WriteLitPatch();
 	cout << "done." << endl;
     return 0;
 }

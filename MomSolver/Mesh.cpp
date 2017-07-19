@@ -85,13 +85,13 @@ bool Mesh::WriteMesh()
 		throw "File open failed";
 	}
 	MeshFile << VertexCount << "\t" << TriangleCount << endl;
-	for (auto iter : Vertexes)
+	for (int i=0;i<VertexCount;i++)
 	{
-		MeshFile << iter[0] << " " << iter[1] << " " << iter[2] << endl;
+		MeshFile << Vertexes[i][0] << " " << Vertexes[i][1] << " " << Vertexes[i][2] << endl;
 	}
-	for (auto iter : Triangles)
+	for (int i = 0;i<TriangleCount;i++)
 	{
-		MeshFile << iter.Node1 << " " << iter.Node2 << " " << iter.Node3 << endl;
+		MeshFile << Triangles[i].Node1 << " " << Triangles[i].Node2 << " " << Triangles[i].Node3 << endl;
 	}
 	MeshFile.close();
 	return true;
@@ -174,9 +174,9 @@ void Mesh::WriteEdge()
 		throw "File open failed";
 	}
 	EdgeFile << Edges.size() << endl;
-	for (auto iter : Edges)
+	for (int i=0;i<Edges.size();i++)
 	{
-		EdgeFile << iter->EdgeNode1 << "\t" << iter->EdgeNode2 << "\t" << iter->Triangle1 << "\t" << iter->Triangle2 << endl;
+		EdgeFile << Edges[i]->EdgeNode1 << "\t" << Edges[i]->EdgeNode2 << "\t" << Edges[i]->Triangle1 << "\t" << Edges[i]->Triangle2 << endl;
 	}
 	EdgeFile.close();
 }

@@ -71,6 +71,10 @@ public:
 	{
 		return Vertexes;
 	}
+	string getFileName()
+	{
+		return FileName;
+	}
 	void EdgeInit();
 	void InsertEdge(Edge *edge, int i);
 	void WriteEdge();

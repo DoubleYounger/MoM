@@ -158,8 +158,6 @@ complex<double> MOM::SingularIntegral(int m, int n, int trim, int trin, int vm3,
 		l_plus[1] = rho[2].dot(r23);
 		l_minus[2] = rho[2].dot(r31);
 		l_plus[2] = rho[0].dot(r31);
-		assert(l_minus[0] < 1e-15&&l_minus[1] < 1e-15&&l_minus[2] < 1e-15);
-		assert(l_plus[0] > 1e-15&&l_plus[1] > 1e-15&&l_plus[2] > 1e-15);
 		normal[0] = rho[0] - l_minus[0] * r12;
 		normal[1] = rho[1] - l_minus[1] * r23;
 		normal[2] = rho[2] - l_minus[2] * r31;
@@ -248,7 +246,8 @@ Vector3cd MOM::IntegralEfield(int m, double phi, double theta)
 	{
 		rm[i] = vm[0] * xx7[i] + vm[1] * yy7[i] + vm[2] * zz7[i];
 		rn[i] = vn[0] * xx7[i] + vn[1] * yy7[i] + vn[2] * zz7[i];
-		I = I + ww7[i] * (rDir.cross(rDir.cross((rm[i] - Node3)))*exp(im*k*rDir.dot(rm[i])) + rDir.cross(rDir.cross((Node4 - rn[i])))*exp(im*k*rDir.dot(rn[i])));
+		//I = I + ww7[i] * (rDir.cross(rDir.cross((rm[i] - Node3)))*exp(im*k*rDir.dot(rm[i])) + rDir.cross(rDir.cross((Node4 - rn[i])))*exp(im*k*rDir.dot(rn[i])));
+		I = I + ww7[i] * ((rm[i] - Node3)*exp(im*k*rDir.dot(rm[i])) + (Node4 - rn[i])*exp(im*k*rDir.dot(rn[i])));
 	}
 	return -im*omega*mu*I*Edges[m]->len*X[m] * green(R) / (4 * PI);
 }

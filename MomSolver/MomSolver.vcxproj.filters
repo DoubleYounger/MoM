@@ -33,10 +33,13 @@
     <ClInclude Include="PlaneWave.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="constant.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="MOM.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="constant.h">
+    <ClInclude Include="PO.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -57,6 +60,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MOM.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

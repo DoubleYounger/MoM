@@ -56,6 +56,11 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Parallel</UseIntelMKL>
+    <UseIntelIPP>false</UseIntelIPP>
+    <UseIntelTBB>false</UseIntelTBB>
+    <InstrumentIntelTBB>false</InstrumentIntelTBB>
+    <UseIntelDAAL>false</UseIntelDAAL>
+    <UseMpiLibrary>INTELMPI</UseMpiLibrary>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -146,6 +151,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +168,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MOM.h" />
     <ClInclude Include="PlaneWave.h" />
+    <ClInclude Include="PO.h" />
     <ClInclude Include="Source.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -171,6 +178,7 @@
     <ClCompile Include="MOM.cpp" />
     <ClCompile Include="MomSolver.cpp" />
     <ClCompile Include="PlaneWave.cpp" />
+    <ClCompile Include="PO.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
