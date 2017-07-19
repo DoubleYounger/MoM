@@ -12,9 +12,10 @@ class PO :
 {
 private:
 	VectorXcd KaJ;
-	double *delta;
+	int *delta;
+	int *RWGdelta;
 	Mesh *mesh;
-	int facetN, edgeN, verN;
+	int facetN, edgeN, verN, litPatchN;
 	vector<Triangle> Triangles;
 	vector<Edge*> Edges;
 	vector<Vector3d> Vertexes;
@@ -27,6 +28,14 @@ public:
 	void judgeLitPatch(Vector3d kDir);
 	void WriteLitPatch();
 	void LitPatchInfo();
+	complex<double> green(double R)
+	{
+		return exp(-im*k*R) / R;
+	}
+	void Solver();
+	Vector3cd IntegralEfield(int m, double phi, double theta);
+	Vector3cd ScatteredField(double phi, double theta);
+	void RCS();
 	~PO();
 };
 

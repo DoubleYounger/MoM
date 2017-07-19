@@ -20,5 +20,6 @@ public:
 	PlaneWave(double magnitude, double fre, double theta, double phi, Polarization p);
 	~PlaneWave();
 	Vector3cd Eincident(Vector3d r);
+	Vector3cd Hincident(Vector3d r);
 };
 

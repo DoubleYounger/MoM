@@ -50,6 +50,8 @@ int main()
 	PO posolver(&mesh, Einc);
 	posolver.judgeLitPatch(Einc.kDir);
 	posolver.WriteLitPatch();
+	posolver.Solver();
+	posolver.RCS();
 	cout << "done." << endl;
     return 0;
 }

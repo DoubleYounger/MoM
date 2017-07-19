@@ -57,6 +57,8 @@ bool Mesh::open(string FileName_)
 		Triangle.Node1--;
 		Triangle.Node2--;
 		Triangle.Node3--;
+		//the normal is pointing to the out space
+		//test passed!!!!!!
 		Triangle.Normal = (Vertexes[Triangle.Node1] - Vertexes[Triangle.Node2]).cross(Vertexes[Triangle.Node2] - Vertexes[Triangle.Node3]);
 		Triangle.Normal.normalize();
 		Triangle.Area = getArea(Vertexes[Triangle.Node1], Vertexes[Triangle.Node2], Vertexes[Triangle.Node3]);
@@ -91,7 +93,7 @@ bool Mesh::WriteMesh()
 	}
 	for (int i = 0;i<TriangleCount;i++)
 	{
-		MeshFile << Triangles[i].Node1 << " " << Triangles[i].Node2 << " " << Triangles[i].Node3 << endl;
+		MeshFile << Triangles[i].Node1 << " " << Triangles[i].Node2 << " " << Triangles[i].Node3 << " " << Triangles[i].Normal[0] << " " << Triangles[i].Normal[1] << " " << Triangles[i].Normal[2] << endl;
 	}
 	MeshFile.close();
 	return true;

@@ -33,3 +33,9 @@ Vector3cd PlaneWave::Eincident(Vector3d r)
 {
 	return magnitude*polarDir*exp(-im*wavenumber*kDir.dot(r));
 }
+
+Vector3cd PlaneWave::Hincident(Vector3d r)
+{
+
+	return kDir.cross(Eincident(r)) / eta;
+}
