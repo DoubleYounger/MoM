@@ -35,7 +35,7 @@ public:
 	void Solver();
 	Vector3cd IntegralEfield(int m, double phi, double theta);
 	Vector3cd ScatteredField(double phi, double theta);
-	void RCS();
+	void RCS(double theta);
 	~PO();
 };
 

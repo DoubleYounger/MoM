@@ -18,7 +18,7 @@ int main()
 	cin >> FileName;*/
 	clock_t start, end;
 	double duration;
-	FileName = "C:/Users/sszz/Documents/Visual Studio 2015/Projects/MomSolver/sphere.nas";
+	FileName = "C:/Users/sszz/Documents/Visual Studio 2015/Projects/MomSolver/rect.nas";
 	Mesh mesh;
 	mesh.open(FileName);
 	mesh.PrintMeshInfo();
@@ -30,7 +30,7 @@ int main()
 	mesh.EdgeInit();
 	mesh.WriteEdge();
 	mesh.PrintEdgeInfo();
-	PlaneWave Einc(1.0, 3e8, PI / 2.0, 0.0, H);
+	PlaneWave Einc(1.0, 3e8, PI / 4.0, 0.0, H);
 	//MOM momsolver(&mesh, Einc);
 	//start = clock();
 	//cout << "Filling Matrix..." << endl;
@@ -45,13 +45,13 @@ int main()
 	//end = clock();
 	//duration = (double)(end - start) / CLOCKS_PER_SEC;
 	//cout << "Solving system equation use " << duration << " second." << endl;
-	//momsolver.RCS();
+	//momsolver.RCS(PI / 4.0);
 	//this is the procedure for PO
 	PO posolver(&mesh, Einc);
 	posolver.judgeLitPatch(Einc.kDir);
 	posolver.WriteLitPatch();
 	posolver.Solver();
-	posolver.RCS();
+	posolver.RCS(PI / 4.0);
 	cout << "done." << endl;
     return 0;
 }

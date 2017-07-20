@@ -157,10 +157,9 @@ Vector3cd PO::ScatteredField(double phi, double theta)
 	return Efield;
 }
 
-void PO::RCS()
+void PO::RCS(double theta)
 {
 	double phi_start = 0.0, phi_end = 2 * PI, phi;
-	double theta = PI / 2.0;
 	double R = 1000.0;
 	double step_phi = (phi_end - phi_start) / 360.0;
 	Vector3cd Efield = Vector3cd::Zero();

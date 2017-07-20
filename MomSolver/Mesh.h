@@ -4,11 +4,35 @@
 #include <fstream>
 #include <iostream>
 #include <math.h>
+#include <map>
 #define EIGEN_USE_MKL_ALL
 #include <Eigen\Dense>
 using namespace Eigen;
 using namespace std;
 
+enum Region
+{
+	mom, po
+};
+template <typename T> class EnumParser
+{
+	map<string, T> enumMap;
+public:
+	EnumParser() {};
+
+	T ParseSomeEnum(const string &value)
+	{
+		typename map <string, T>::const_iterator iValue = enumMap.find(value);
+		if (iValue == enumMap.end())
+			throw runtime_error("");
+		return iValue->second;
+	}
+};
+EnumParser<Region>::EnumParser()
+{
+	enumMap["mom"] = mom;
+	enumMap["po"] = po;
+}
 typedef struct TriangleStruct
 {
 	//No of the triangle in the coordinate list
@@ -20,6 +44,8 @@ typedef struct TriangleStruct
 	//area of the triangle
 	double Area;
 	Vector3d Center;
+	int patch;
+	Region RegionType;
 }Triangle;
 
 typedef struct EdgeStruct
@@ -31,6 +57,7 @@ typedef struct EdgeStruct
 	int Triangle1;
 	int Triangle2;
 	double len;
+	Region RegionType;
 }Edge;
 
 class Mesh
@@ -42,10 +69,12 @@ private:
 	//file name of the mesh
 	string FileName;
 	vector<Edge*> Edges;
+	map<int, Region> mapPatch;
 public:
 	Mesh();
 	bool WriteMesh();
 	bool open(string FileName);
+	bool mapFileReader();
 	void PrintMeshInfo();
 	int getVertexCount() 
 	{ 

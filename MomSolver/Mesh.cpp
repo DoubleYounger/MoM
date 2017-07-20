@@ -42,6 +42,10 @@ bool Mesh::open(string FileName_)
 	MeshFile.get();
 	MeshFile.getline(chs, 200);
 	MeshFile.getline(chs, 200);
+	//read map file first
+	if (!mapFileReader())
+		cout << "map file read error!" << endl;
+
 	Triangle Triangle;
 	double x, y, z;
 	Vector3d Vertex;
@@ -53,7 +57,8 @@ bool Mesh::open(string FileName_)
 	}
 	for (int i = 0; i < TriangleCount; i++)
 	{
-		MeshFile >> str >> temp >> temp >> Triangle.Node1 >> Triangle.Node2 >> Triangle.Node3;
+		MeshFile >> str >> temp >> Triangle.patch >> Triangle.Node1 >> Triangle.Node2 >> Triangle.Node3;
+		Triangle.RegionType = mapPatch[Triangle.patch];
 		Triangle.Node1--;
 		Triangle.Node2--;
 		Triangle.Node3--;
@@ -64,6 +69,28 @@ bool Mesh::open(string FileName_)
 		Triangle.Area = getArea(Vertexes[Triangle.Node1], Vertexes[Triangle.Node2], Vertexes[Triangle.Node3]);
 		Triangle.Center = (Vertexes[Triangle.Node1] + Vertexes[Triangle.Node2] + Vertexes[Triangle.Node3]) / 3.0;
 		Triangles.push_back(Triangle);
+	}
+
+	return false;
+}
+
+bool Mesh::mapFileReader()
+//to determine the region type of the whole patches must read the .map file
+{
+	string mapFileName = FileName.substr(0, FileName.find(".")) + ".map";
+	fstream mapFile(mapFileName, ios::in);
+	if (mapFile.fail())
+	{
+		cout << "map File open failed... (please make sure if it doesn't matter!)" << endl;
+	}
+	int patch;
+	string type;
+	string patchName;
+	EnumParser<Region> fieldTypeParser;
+	while (!mapFile.eof())
+	{
+		mapFile >> patch >> patchName >> type;
+		mapPatch[patch] = fieldTypeParser.ParseSomeEnum(type);
 	}
 	return true;
 }
@@ -160,6 +187,14 @@ void Mesh::InsertEdge(Edge *edge, int i)
 				edge->EdgeNode3 = Triangles[edge->Triangle1].Node1 + Triangles[edge->Triangle1].Node2 + Triangles[edge->Triangle1].Node3 - edge->EdgeNode1 - edge->EdgeNode2;
 				edge->EdgeNode4 = Triangles[edge->Triangle2].Node1 + Triangles[edge->Triangle2].Node2 + Triangles[edge->Triangle2].Node3 - edge->EdgeNode1 - edge->EdgeNode2;
 				edge->len = (Vertexes[edge->EdgeNode1] - Vertexes[edge->EdgeNode2]).norm();
+				if (Triangles[edge->Triangle1].RegionType == Triangles[edge->Triangle2].RegionType)
+				{
+					edge->RegionType = Triangles[edge->Triangle1].RegionType;
+				}
+				else
+				{
+					edge->RegionType = po;
+				}
 				Edges.push_back(edge);
 				break;
 			}
