@@ -224,3 +224,16 @@ void Mesh::PrintEdgeInfo()
 	cout << "----------------------------------------------------" << endl;
 	return;
 }
+
+void Mesh::divideEdges()
+{
+	for (int i = 0;i < EdgeCount; i++)
+	{
+		if (Edges[i]->RegionType == po)
+			POEdges.push_back(i);
+		else if (Edges[i]->RegionType == mom)
+			MOMEdges.push_back(i);
+		else
+			MOMEdges[i] = i;
+	}
+}

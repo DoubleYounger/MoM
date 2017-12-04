@@ -4,12 +4,16 @@
 
 MOM::MOM(Mesh *mesh, PlaneWave &planewave):mesh(mesh), planewave(planewave)
 {
-	edgeN = mesh->getEdgeCount();
+	//edgeN = mesh->getEdgeCount();
+	edgeN = mesh->getMOMEdgesCount();
 	ZMatrix = MatrixXcd::Zero(edgeN, edgeN);
 	rhs = VectorXcd::Zero(edgeN);
+	rhs0 = VectorXcd::Zero(edgeN);
 	X = VectorXcd::Zero(edgeN);
 	Triangles = mesh->getTriangles();
 	Edges = mesh->getEdges();
+	MOMEdges = mesh->getMOMEdges();
+	POEdges = mesh->getPOEdges();
 	Vertexes = mesh->getVertexes();
 	k = planewave.wavenumber;
 	eta = planewave.eta;
@@ -27,49 +31,49 @@ void MOM::FillMatrix()
 		for (int n = 0;n < edgeN;n++)
 		{
 			int tml, tmr, tnl, tnr, vm3, vn3;
-			tml = Edges[m]->Triangle1;
-			tmr = Edges[m]->Triangle2;
-			tnl = Edges[n]->Triangle1;
-			tnr = Edges[n]->Triangle2;
-			vm3 = Edges[m]->EdgeNode3;
-			vn3 = Edges[n]->EdgeNode3;
+			tml = Edges[MOMEdges[m]]->Triangle1;
+			tmr = Edges[MOMEdges[m]]->Triangle2;
+			tnl = Edges[MOMEdges[n]]->Triangle1;
+			tnr = Edges[MOMEdges[n]]->Triangle2;
+			vm3 = Edges[MOMEdges[m]]->EdgeNode3;
+			vn3 = Edges[MOMEdges[n]]->EdgeNode3;
 			if (tml != tnl)
 			{
-				zll= Integral(m, n, tml, tnl, vm3, vn3);
+				zll= Integral(MOMEdges[m], MOMEdges[n], tml, tnl, vm3, vn3);
 			}
 			else
 			{
-				zll = SingularIntegral(m, n, tml, tnl, vm3, vn3);
+				zll = SingularIntegral(MOMEdges[m], MOMEdges[n], tml, tnl, vm3, vn3);
 			}
-			vm3 = Edges[m]->EdgeNode3;
-			vn3 = Edges[n]->EdgeNode4;
+			vm3 = Edges[MOMEdges[m]]->EdgeNode3;
+			vn3 = Edges[MOMEdges[n]]->EdgeNode4;
 			if (tml != tnr)
 			{
-				zlr = Integral(m, n, tml, tnr, vm3, vn3);
+				zlr = Integral(MOMEdges[m], MOMEdges[n], tml, tnr, vm3, vn3);
 			}
 			else
 			{
-				zlr = SingularIntegral(m, n, tml, tnr, vm3, vn3);
+				zlr = SingularIntegral(MOMEdges[m], MOMEdges[n], tml, tnr, vm3, vn3);
 			}
-			vm3 = Edges[m]->EdgeNode4;
-			vn3 = Edges[n]->EdgeNode3;
+			vm3 = Edges[MOMEdges[m]]->EdgeNode4;
+			vn3 = Edges[MOMEdges[n]]->EdgeNode3;
 			if (tmr != tnl)
 			{
-				zrl = Integral(m, n, tmr, tnl, vm3, vn3);
+				zrl = Integral(MOMEdges[m], MOMEdges[n], tmr, tnl, vm3, vn3);
 			}
 			else
 			{
-				zrl =  SingularIntegral(m, n, tmr, tnl, vm3, vn3);
+				zrl =  SingularIntegral(MOMEdges[m], MOMEdges[n], tmr, tnl, vm3, vn3);
 			}
-			vm3 = Edges[m]->EdgeNode4;
-			vn3 = Edges[n]->EdgeNode4;
+			vm3 = Edges[MOMEdges[m]]->EdgeNode4;
+			vn3 = Edges[MOMEdges[n]]->EdgeNode4;
 			if (tmr != tnr)
 			{
-				zrr = Integral(m, n, tmr, tnr, vm3, vn3);
+				zrr = Integral(MOMEdges[m], MOMEdges[n], tmr, tnr, vm3, vn3);
 			}
 			else
 			{
-				zrr = SingularIntegral(m, n, tmr, tnr, vm3, vn3);
+				zrr = SingularIntegral(MOMEdges[m], MOMEdges[n], tmr, tnr, vm3, vn3);
 			}
 			ZMatrix(m, n) = zll - zlr - zrl + zrr;
 		}
@@ -198,7 +202,8 @@ void MOM::FillRhs()
 {
 	for (int m = 0;m < edgeN;m++)
 	{
-		rhs(m) = IntegralRhs(m);
+		rhs(m) = IntegralRhs(MOMEdges[m]);
+		rhs0(m) = rhs(m);
 	}
 }
 
@@ -229,16 +234,16 @@ Vector3cd MOM::IntegralEfield(int m, double phi, double theta)
 {
 	Vector3d rm[M], rn[M], vm[3], vn[3];
 	Vector3cd I = Vector3cd::Zero();
-	int trim = Edges[m]->Triangle1;
-	int trin = Edges[m]->Triangle2;
+	int trim = Edges[MOMEdges[m]]->Triangle1;
+	int trin = Edges[MOMEdges[m]]->Triangle2;
 	vm[0] = Vertexes[Triangles[trim].Node1];
 	vm[1] = Vertexes[Triangles[trim].Node2];
 	vm[2] = Vertexes[Triangles[trim].Node3];
 	vn[0] = Vertexes[Triangles[trin].Node1];
 	vn[1] = Vertexes[Triangles[trin].Node2];
 	vn[2] = Vertexes[Triangles[trin].Node3];
-	Vector3d Node3 = Vertexes[Edges[m]->EdgeNode3];
-	Vector3d Node4 = Vertexes[Edges[m]->EdgeNode4];
+	Vector3d Node3 = Vertexes[Edges[MOMEdges[m]]->EdgeNode3];
+	Vector3d Node4 = Vertexes[Edges[MOMEdges[m]]->EdgeNode4];
 	double R = 1000;
 	Vector3d rDir = Vector3d::Zero();
 	rDir << sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta);
@@ -249,14 +254,15 @@ Vector3cd MOM::IntegralEfield(int m, double phi, double theta)
 		//I = I + ww7[i] * (rDir.cross(rDir.cross((rm[i] - Node3)))*exp(im*k*rDir.dot(rm[i])) + rDir.cross(rDir.cross((Node4 - rn[i])))*exp(im*k*rDir.dot(rn[i])));
 		I = I + ww7[i] * ((rm[i] - Node3)*exp(im*k*rDir.dot(rm[i])) + (Node4 - rn[i])*exp(im*k*rDir.dot(rn[i])));
 	}
-	return -im*omega*mu*I*Edges[m]->len*X[m] * green(R) / (4 * PI);
+	return -im*omega*mu*I*Edges[MOMEdges[m]]->len*X[m] * green(R) / (4 * PI);
 }
 
-void MOM::Solver()
+VectorXcd MOM::Solver()
 {
 	this->X = ZMatrix.householderQr().solve(rhs);
 	double relative_error = (ZMatrix*X - rhs).norm() / rhs.norm(); // norm() is L2 norm
-	cout << "The relative error is:\n" << relative_error << endl;
+	//cout << "The relative error is:\n" << relative_error << endl;
+	return X;
 }
 
 Vector3cd MOM::ScatteredField(double phi, double theta)
@@ -288,6 +294,76 @@ void MOM::RCS(double theta)
 		RCSFile << 10 * log10(RCS[i]) << endl;
 	}
 	return;
+}
+
+void MOM::updateRhs(VectorXcd J)
+{
+	deltaRhs = VectorXcd::Zero(edgeN);
+	complex<double> zll = 0, zlr = 0, zrl = 0, zrr = 0;
+	for (int m = 0;m < edgeN;m++)
+	{
+		//cout << m << endl;
+		for (int n = 0;n < mesh->getPOEdgesCount();n++)
+		{
+			int tml, tmr, tnl, tnr, vm3, vn3;
+			tml = Edges[MOMEdges[m]]->Triangle1;
+			tmr = Edges[MOMEdges[m]]->Triangle2;
+			tnl = Edges[POEdges[n]]->Triangle1;
+			tnr = Edges[POEdges[n]]->Triangle2;
+			vm3 = Edges[MOMEdges[m]]->EdgeNode3;
+			vn3 = Edges[POEdges[n]]->EdgeNode3;
+			if (tml != tnl)
+			{
+				zll = Integral(MOMEdges[m], POEdges[n], tml, tnl, vm3, vn3);
+			}
+			else
+			{
+				cout << "error" << endl;
+				zll = SingularIntegral(MOMEdges[m], POEdges[n], tml, tnl, vm3, vn3);
+			}
+			vm3 = Edges[MOMEdges[m]]->EdgeNode3;
+			vn3 = Edges[POEdges[n]]->EdgeNode4;
+			if (tml != tnr)
+			{
+				zlr = Integral(MOMEdges[m], POEdges[n], tml, tnr, vm3, vn3);
+			}
+			else
+			{
+				cout << "error" << endl;
+				zlr = SingularIntegral(MOMEdges[m], POEdges[n], tml, tnr, vm3, vn3);
+			}
+			vm3 = Edges[MOMEdges[m]]->EdgeNode4;
+			vn3 = Edges[POEdges[n]]->EdgeNode3;
+			if (tmr != tnl)
+			{
+				zrl = Integral(MOMEdges[m], POEdges[n], tmr, tnl, vm3, vn3);
+			}
+			else
+			{
+				cout << "error" << endl;
+				zrl = SingularIntegral(MOMEdges[m], POEdges[n], tmr, tnl, vm3, vn3);
+			}
+			vm3 = Edges[MOMEdges[m]]->EdgeNode4;
+			vn3 = Edges[POEdges[n]]->EdgeNode4;
+			if (tmr != tnr)
+			{
+				zrr = Integral(MOMEdges[m], POEdges[n], tmr, tnr, vm3, vn3);
+			}
+			else
+			{
+				cout << "error" << endl;
+				zrr = SingularIntegral(MOMEdges[m], POEdges[n], tmr, tnr, vm3, vn3);
+			}
+			deltaRhs(m) = deltaRhs(m) - J[n] * (zll - zlr - zrl + zrr);
+		}
+	}
+	rhs = rhs0 + deltaRhs;
+	//cout << J << endl;
+}
+
+VectorXcd MOM::getCurrent()
+{
+	return this->X;
 }
 
 

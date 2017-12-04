@@ -10,12 +10,15 @@ class MOM :
 {
 private:
 	MatrixXcd ZMatrix;
-	VectorXcd rhs;
+	VectorXcd rhs, rhs0;
+	VectorXcd deltaRhs;
 	VectorXcd X;
 	Mesh *mesh;
 	int edgeN;
 	vector<Triangle> Triangles;
 	vector<Edge*> Edges;
+	vector<int> MOMEdges;
+	vector<int> POEdges;
 	vector<Vector3d> Vertexes;
 	PlaneWave planewave;
 	double k, eta, mu, epsilon, omega;
@@ -29,9 +32,16 @@ public:
 	void FillRhs();
 	complex<double> IntegralRhs(int m);
 	Vector3cd IntegralEfield(int m, double phi, double theta);
-	void Solver();
+	VectorXcd Solver();
 	Vector3cd ScatteredField(double phi, double theta);
 	void RCS(double theta);
+	void updateRhs(VectorXcd J);
+	VectorXcd getCurrent();
+	void setRhsZero()
+	{
+		rhs = VectorXcd::Zero(edgeN);
+		rhs0 = VectorXcd::Zero(edgeN);
+	}
 	~MOM();
 };
 

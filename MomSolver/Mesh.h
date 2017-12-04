@@ -12,7 +12,7 @@ using namespace std;
 
 enum Region
 {
-	mom, po
+	mom, po, other
 };
 template <typename T> class EnumParser
 {
@@ -32,6 +32,7 @@ EnumParser<Region>::EnumParser()
 {
 	enumMap["mom"] = mom;
 	enumMap["po"] = po;
+	enumMap["other"] = other;
 }
 typedef struct TriangleStruct
 {
@@ -63,9 +64,10 @@ typedef struct EdgeStruct
 class Mesh
 {
 private:
-	vector<Triangle> Triangles;
-	vector<Vector3d> Vertexes;
+	vector<Triangle> Triangles;//all of the triangles
+	vector<Vector3d> Vertexes;//all of the vertexes
 	int VertexCount, TriangleCount, EdgeCount;
+	vector<int> POEdges,MOMEdges;
 	//file name of the mesh
 	string FileName;
 	vector<Edge*> Edges;
@@ -104,10 +106,27 @@ public:
 	{
 		return FileName;
 	}
+	int getPOEdgesCount()
+	{
+		return POEdges.size();
+	}
+	int getMOMEdgesCount()
+	{
+		return MOMEdges.size();
+	}
+	vector<int> &getMOMEdges()
+	{
+		return MOMEdges;
+	}
+	vector<int> &getPOEdges()
+	{
+		return POEdges;
+	}
 	void EdgeInit();
 	void InsertEdge(Edge *edge, int i);
 	void WriteEdge();
 	void PrintEdgeInfo();
+	void divideEdges(); //divide the edges to PO edges and MOM edges
 	~Mesh();
 };
 
